@@ -1,0 +1,108 @@
+#!/usr/local/bin/php
+<?php
+declare(strict_types=1);
+
+function getDificculty(array $option): string {
+        switch ($option[1]) {
+            case '--easy':
+                return "easy";
+                break;
+            case '--normal':
+                return  "normal";
+                break;
+            case '--hard':
+                return "hard";
+                break;
+            case '--help':
+                return "help";
+                break;
+            default:
+                exit("無効なオプションです。\nスクリプトを終了します。");
+        }
+}
+
+function printHelpMessage() {
+    print("実行方法: ./Main [option]\n");
+    print("例:       ./Main --easy\n");
+    print("オプションは合計で3つのみです。オプションは主に難易度指定として使われます。\n");
+    print("=============================================================\n");
+    print("--easy    初級モード。1から5の段まで出題されます。\n");
+    print("--normal  中級モード。1から9の段まで出題されます。\n");
+    print("--hard    上級モード。1から20の段まで出題されます。\n");
+    print("=============================================================\n");
+    exit();
+}
+
+function printStartMessage(): void {
+    print("==========================================================================\n");
+    print("フラッシュ掛け算ゲームへようこそ！\n");
+    print("問題は合計「30問」出題されます。\n");
+    print("全て解答し終わると、全て解き終わるまでにかかったタイムと正答率が出ます。\n");
+    print("============================================================================\n");
+    //説明を読む時間を設定
+    sleep(3);
+    print("10秒後に開始されます。\n");
+}
+
+function countTenSecond(): void {
+    for($i = 0; $i < 2; $i++) {
+        print($i+1 . "秒". "\r");
+        sleep(1);
+    }
+}
+
+/**
+ * TODO:  掛け算問題配列生成関数を二重forでつくる
+ */
+function createProblemArray(int $first, int $last): array {
+    //TODO 実装
+}
+
+function getProblems(string $dificculty): array {
+    //問題格納用
+    $problems = [];
+    //難易度に合わせて問題を変えて格納
+    switch ($dificculty) {
+        case 'easy':
+            $problems = createProblemArray(1, 5);
+            return $problems;
+        case 'normal':
+            $problems = createProblemArray(1, 9);
+            return $problems;
+        case 'hard':
+            $problems = createProblemArray(1, 20);
+            return $problems;
+
+    }
+}
+
+function Main(string $dificculty): void {
+    //問題格納用
+    $problems = [];
+    //開始メッセージ
+    printStartMessage();
+    //10秒カウント。
+    countTenSecond();
+    //難易度に合わせた問題セットを取得
+    $problems = getProblems($dificculty);
+    var_dump($problems);
+}
+
+//難易度格納変数
+$dificculty = '';
+//argvが空でない時だけ実行時のオプションに合う難易度を取得
+if (!array_key_exists(1, $argv)) {
+    exit("必ずオプションをつけて実行してください。\n有効なオプションは「--help」オプションで参照してください\n");
+} else {
+    $dificculty = getDificculty($argv);
+}
+
+//help以外なら開始
+switch ($dificculty) {
+    case "help":
+        printHelpMessage();
+        break;
+    default:
+    //難易度を渡し開始
+    Main($dificculty);
+}
