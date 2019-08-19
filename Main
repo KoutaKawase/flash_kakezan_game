@@ -76,7 +76,6 @@ function getProblems(string $dificculty): array {
     switch ($dificculty) {
         case 'easy':
             $problems = createProblemArray(1, 5);
-            var_dump($problems);
             return $problems;
         case 'normal':
             $problems = createProblemArray(1, 9);
@@ -85,6 +84,41 @@ function getProblems(string $dificculty): array {
             $problems = createProblemArray(1, 20);
             return $problems;
 
+    }
+}
+
+function getOneProblem(array $problems): string {
+    //ランダムにキーを取得
+    $rand_key = array_rand($problems);
+    //ランダムなキーから問題を取得
+    $rand_problem = $problems[$rand_key];
+    //返す
+    return $rand_problem;
+}
+
+function checkAnswer(string $problem): bool {
+    $isCorrect = false;
+    //回答を数値として受け取る
+    print("回答を入力してください。>> ");
+    $InputAnswer = (int) trim(fgets(STDIN));
+    //問題から項を配列に分ける
+    $terms = explode(' ', $problem);
+    //答えを計算
+    $correctNumber = $terms[0] * $terms[2];
+    //答えとインプットを比較
+    if ($InputAnswer === $correctNumber) {
+        $isCorrect = true;
+        return $isCorrect;
+    } else {
+        return $isCorrect;
+    }
+}
+
+function printMessageAboutCorrect(bool $isCorrect): void {
+    if ($isCorrect) {
+        print("正解！\n");
+    } else {
+        print("ブッブーですわ！\n");
     }
 }
 
@@ -97,7 +131,18 @@ function Main(string $dificculty): void {
     countTenSecond();
     //難易度に合わせた問題セットを取得
     $problems = getProblems($dificculty);
-    var_dump($problems);
+    //30回出題する
+    foreach(range(1, 30) as $index) {
+        print($index . "問目: ");
+        //ランダムに問題を一つ取得
+        $problemForPrint = getOneProblem($problems);
+        //出題
+        print($problemForPrint.chr(10));
+        //入力を受け取り合っているか精査 boolで返す
+        $isCorrect = checkAnswer($problemForPrint);
+        //正解か不正解かでメッセージを分けて出力
+        printMessageAboutCorrect($isCorrect);
+    }
 }
 
 //難易度格納変数
