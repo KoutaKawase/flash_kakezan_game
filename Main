@@ -51,11 +51,22 @@ function countTenSecond(): void {
     }
 }
 
-/**
- * TODO:  掛け算問題配列生成関数を二重forでつくる
- */
 function createProblemArray(int $first, int $last): array {
-    //TODO 実装
+    //格納用配列宣言
+    $problems = [];
+    //かける数最初と最後を定数として定義
+    define('MULTI_FIRST', 1);
+    define('MULTI_LAST', 9);
+    //掛け算問題文字列生成し配列に格納
+    foreach(range($first, $last) as $index) {
+        foreach(range(MULTI_FIRST, MULTI_LAST) as $index2) {
+            //配列に入れる要素組み立て
+            $element = $index . " * " . $index2;
+            //配列に格納
+            array_push($problems, $element);
+        }
+    }
+    return $problems;
 }
 
 function getProblems(string $dificculty): array {
@@ -65,6 +76,7 @@ function getProblems(string $dificculty): array {
     switch ($dificculty) {
         case 'easy':
             $problems = createProblemArray(1, 5);
+            var_dump($problems);
             return $problems;
         case 'normal':
             $problems = createProblemArray(1, 9);
