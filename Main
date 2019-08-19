@@ -122,15 +122,56 @@ function printMessageAboutCorrect(bool $isCorrect): void {
     }
 }
 
+function countCorrectCounter(bool $isCorrect, int $correctCount): int {
+    if($isCorrect) {
+        //正解なら１カウントする
+        $correctCount++;
+        return $correctCount;
+    } else {
+        return $correctCount;
+    }
+}
+
+function calcResult(int $correctCount, int $startTime, int $endTime): array {
+    //問題出題数
+    define("MAX_VALUE", 30);
+    //タイム格納用
+    $time = 0;
+    //百分率で正解率計算 ただし小数点第二位まで
+    $accuracyRate = round(($correctCount / MAX_VALUE) * 100, 2);
+    //タイム計算
+    $time = date("H:i:s", $endTime - $startTime);
+    return ["accuracyRate" => $accuracyRate, "time" => $time];
+}
+
+function printScore(array $results): void {
+    $scoreMessage=  <<<EOT
+                    SCORE:
+                        ACCURACY RATE: {$results["accuracyRate"]}%
+                        TIME:          {$results["time"]}\n
+                    EOT;
+    print("============================================================\n");
+    print($scoreMessage);
+}
+
 function Main(string $dificculty): void {
     //問題格納用
     $problems = [];
+    //正答カウンター
+    $correctCount = 0;
+    //結果格納用
+    $result = null;
+    //タイマー開始変数
+    $startTime = 0;
+
     //開始メッセージ
     printStartMessage();
     //10秒カウント。
     countTenSecond();
     //難易度に合わせた問題セットを取得
     $problems = getProblems($dificculty);
+    //タイマー開始
+    $startTime = time();
     //30回出題する
     foreach(range(1, 30) as $index) {
         print($index . "問目: ");
@@ -142,7 +183,15 @@ function Main(string $dificculty): void {
         $isCorrect = checkAnswer($problemForPrint);
         //正解か不正解かでメッセージを分けて出力
         printMessageAboutCorrect($isCorrect);
+        //正解なら1カウントする
+        $correctCount = countCorrectCounter($isCorrect, $correctCount);
     }
+    //タイマー計測終了
+    $endTime = time();
+    //リザルト(時間と正解率)計算 連想配列で取得
+    $results = calcResult($correctCount, $startTime, $endTime);
+    //スコア表示
+    printScore($results);
 }
 
 //難易度格納変数
