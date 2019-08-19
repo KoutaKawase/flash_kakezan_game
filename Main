@@ -22,6 +22,7 @@ function getDificculty(array $option): string {
 }
 
 function printHelpMessage() {
+    print("=============================================================\n");
     print("実行方法: ./Main [option]\n");
     print("例:       ./Main --easy\n");
     print("オプションは合計で3つのみです。オプションは主に難易度指定として使われます。\n");
@@ -33,19 +34,20 @@ function printHelpMessage() {
     exit();
 }
 
-function printStartMessage(): void {
+function printStartMessage(string $dificculty): void {
+    $dificculty = strtoupper($dificculty);
     print("==========================================================================\n");
-    print("フラッシュ掛け算ゲームへようこそ！\n");
+    print("フラッシュ掛け算ゲームへようこそ！(難易度: {$dificculty}) \n");
     print("問題は合計「30問」出題されます。\n");
     print("全て解答し終わると、全て解き終わるまでにかかったタイムと正答率が出ます。\n");
     print("============================================================================\n");
     //説明を読む時間を設定
-    sleep(3);
-    print("10秒後に開始されます。\n");
+    sleep(1);
+    print("5秒後に開始されます。\n");
 }
 
 function countTenSecond(): void {
-    for($i = 0; $i < 2; $i++) {
+    for($i = 0; $i < 5; $i++) {
         print($i+1 . "秒". "\r");
         sleep(1);
     }
@@ -154,6 +156,60 @@ function printScore(array $results): void {
     print($scoreMessage);
 }
 
+function askMorePlay(): bool {
+    while(true) {
+        print("もう一度プレイしますか? (y/n) >> ");
+        $input = trim(fgets(STDIN));
+        switch ($input) {
+            case 'y':
+                return true;
+                break;
+            case 'n':
+                return false;
+                break;
+            default:
+                print("正しい形式で入力してください。\n");
+        }
+    }
+}
+
+function askDifficulty(): string {
+    print("次にプレイするゲームの難易度を選んでください。\n");
+    print("1: EASY 2: NORMAL 3: HARD 4: HELP\n");
+    while (true) {
+        print(" >> ");
+        $dificculty = trim(fgets(STDIN));
+        switch($dificculty) {
+            case '1':
+                return 'easy';
+                break;
+            case '2':
+                return 'normal';
+                break;
+            case '3':
+                return 'hard';
+                break;
+            case '4':
+                return 'help';
+                break;
+            default:
+                print("無効な形式です。正しい入力をしてください。\n");
+        }
+    }
+}
+
+function replayGame(bool $isNextPlay): void {
+    if ($isNextPlay) {
+        //難易度を聞く
+        $dificculty = askDifficulty();
+        //区切り表示
+        print("*******************************************************\n\n\n");
+        system("./Main --{$dificculty}");
+    } else {
+        exit("じゃあね！また遊ぼう！");
+    }
+}
+
 function Main(string $dificculty): void {
     //問題格納用
     $problems = [];
@@ -165,7 +221,7 @@ function Main(string $dificculty): void {
     $startTime = 0;
 
     //開始メッセージ
-    printStartMessage();
+    printStartMessage($dificculty);
     //10秒カウント。
     countTenSecond();
     //難易度に合わせた問題セットを取得
@@ -192,6 +248,10 @@ function Main(string $dificculty): void {
     $results = calcResult($correctCount, $startTime, $endTime);
     //スコア表示
     printScore($results);
+    //もう一度プレイするか聞く
+    $isNextPlay = askMorePlay();
+    //続けてプレイするならもう一度最初から実行させる
+    replayGame($isNextPlay);
 }
 
 //難易度格納変数
